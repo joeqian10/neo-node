@@ -1,5 +1,4 @@
 using Akka.Actor;
-using Microsoft.Extensions.Configuration;
 using Neo.ConsoleService;
 using Neo.Cryptography.ECC;
 using Neo.IO;
@@ -356,19 +355,10 @@ namespace Neo.CLI
                     case "--noverify":
                         verifyImport = false;
                         break;
-                    case "/testnet":
-                    case "--testnet":
-                    case "-t":
-                        ProtocolSettings.Initialize(new ConfigurationBuilder().AddJsonFile("protocol.testnet.json").Build());
-                        Settings.Initialize(new ConfigurationBuilder().AddJsonFile("config.testnet.json").Build());
-                        break;
-                    case "/mainnet":
-                    case "--mainnet":
-                    case "-m":
-                        ProtocolSettings.Initialize(new ConfigurationBuilder().AddJsonFile("protocol.mainnet.json").Build());
-                        Settings.Initialize(new ConfigurationBuilder().AddJsonFile("config.mainnet.json").Build());
-                        break;
                 }
+
+            _ = new Logger();
+
             NeoSystem = new NeoSystem(Settings.Default.Storage.Engine);
 
             foreach (var plugin in Plugin.Plugins)
@@ -417,7 +407,7 @@ namespace Neo.CLI
                 }
                 catch (System.Security.Cryptography.CryptographicException)
                 {
-                    Console.WriteLine($"failed to open file \"{Settings.Default.UnlockWallet.Path}\"");
+                    Console.WriteLine($"Failed to open file \"{Settings.Default.UnlockWallet.Path}\"");
                 }
                 if (Settings.Default.UnlockWallet.StartConsensus && CurrentWallet != null)
                 {
